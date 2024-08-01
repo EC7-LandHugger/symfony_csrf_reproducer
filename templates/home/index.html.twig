@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Symfony CSRF Bug Reproducer
+{% endblock %}
+
+{% block body %}
+    <h1>Symfony CSRF Bug Reproducer</h1>
+    <form method="POST">
+        <p style="margin: 10px;">
+            Sample form to demonstrate the bug.
+        </p>
+
+        <div style="margin-bottom: 5px; font-weight: bold;">
+            <label for="homePlanet">Home Planet</label><br>
+            <input type="text" id="homePlanet" name="homePlanet" placeholder="Enter your home planet">
+        </div>
+
+        <div style="margin-bottom: 5px; font-weight: bold;">
+            <label for="pollutedEnd">
+                Pollute the CSRF Token At
+                <span style="color: red;">*</span>
+            </label><br>
+
+            <select name="pollutedEnd" id="pollutedEnd">
+                <option value="left" selected>Left</option>
+                <option value="right">Right</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('planet') }}">
+
+        <button type="submit">Beam Me Up</button>
+    </form>
+
+    <h2>Bug Report</h2>
+    {% if app.request.method == 'POST' %}
+        <table border="1">
+            <tr>
+                <td>Submitted Token</td>
+                <td>{{ submittedToken }}</td>
+            </tr>
+            <tr>
+                <td>Polluted Token</td>
+                <td>{{ pollutedToken }}</td>
+            </tr>
+            <tr>
+                <td>Token Polluted At</td>
+                <td>{{ pollutedEnd }}</td>
+            </tr>
+            <tr>
+                <td>Is Polluted Token Valid</td>
+                <td>{{ isPollutedTokenValid ? "Yes" : "No" }}</td>
+            </tr>
+        </table>
+    {% else %}
+        <p>Please submit the form to view the bug report.</p>
+    {% endif %}
+{% endblock %}
